@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://tibco.common.com/Log.xsd" xmlns:ns3="http://schemas.otterbox.com/CanonicalMessages-1.0.0/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://www.tibco.com/pe/DeployedVarsType" xmlns:pfx="http://tibco.common.com/Error.xsd">
+    <pd:name>BusinessProcesses/AspectVia/PublicationInterfaces/StarterProcesses/REST_HttpReceiver.process</pd:name>
+    <pd:startName>HTTP Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="HTTP Receiver">
+        <pd:type>com.tibco.plugin.http.HTTPEventSource</pd:type>
+        <pd:resourceType>httppalette.httpEventSource</pd:resourceType>
+        <pd:x>50</pd:x>
+        <pd:y>165</pd:y>
+        <config>
+            <outputMode>String</outputMode>
+            <defaultEncoding>UTF8</defaultEncoding>
+            <inputOutputVersion>5.3.0</inputOutputVersion>
+            <newMimeSupport>true</newMimeSupport>
+            <sharedChannel>/SharedResources/Connections/HTTP/AspectViaHTTPConnection.sharedhttp</sharedChannel>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Accept" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Charset" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Encoding" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Length" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Connection" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1002</pd:endX>
+    <pd:endY>165</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1333578746216</pd:targetNamespace>
+    <pd:activity name="CatchAll">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>343</pd:x>
+        <pd:y>361</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Check URL and Method">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>272</pd:x>
+        <pd:y>173</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="getUUID">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>151</pd:x>
+        <pd:y>165</pd:y>
+        <config>
+            <processName>/CommonServices/UtilityServices/Common/getUUID.process</processName>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="HandleInternalErrors">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>553</pd:x>
+        <pd:y>361</pd:y>
+        <config>
+            <processName>/CommonServices/ExceptionHandling/HandleException.process</processName>
+        </config>
+        <pd:inputBindings>
+            <in>
+                <xsl:choose>
+                    <xsl:when test="string-length($HTTP-Receiver/ProcessStarterOutput/QueryString)>0">
+                        <xsl:if test="$HTTP-Receiver/ProcessStarterOutput/QueryString">
+                            <xmlMessage>
+                                <xsl:value-of select="$HTTP-Receiver/ProcessStarterOutput/QueryString"/>
+                            </xmlMessage>
+                        </xsl:if>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:if test="$HTTP-Receiver/ProcessStarterOutput/PostData">
+                            <xmlMessage>
+                                <xsl:value-of select="$HTTP-Receiver/ProcessStarterOutput/PostData"/>
+                            </xmlMessage>
+                        </xsl:if>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <JMSDestination>
+                    <xsl:value-of select="$_globalVariables/pfx2:GlobalVariables/JMS/Destinations/Queues/HTTPErrorQueue"/>
+                </JMSDestination>
+                <FaultProperties>
+                    <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                        <ErrorCode>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                        </ErrorCode>
+                    </xsl:if>
+                    <xsl:if test="$_error/ns1:ErrorReport/Msg">
+                        <ErrorMessage>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                        </ErrorMessage>
+                    </xsl:if>
+                    <xsl:if test="$_error/ns1:ErrorReport/Data/*">
+                        <ErrorDetail>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/Data/*"/>
+                        </ErrorDetail>
+                    </xsl:if>
+                </FaultProperties>
+                <pfx:Error>
+                    <pfx:MessageID>
+                        <xsl:value-of select="$getUUID/uuid"/>
+                    </pfx:MessageID>
+                    <pfx:CorrelationID>
+                        <xsl:value-of select="$getUUID/uuid"/>
+                    </pfx:CorrelationID>
+                    <pfx:Role>
+                        <xsl:value-of select="'ERROR'"/>
+                    </pfx:Role>
+                    <pfx:ErrorReport>
+                        <xsl:copy-of select="$_error/ns1:ErrorReport/ancestor-or-self::*/namespace::node()"/>
+                        <xsl:copy-of select="$_error/ns1:ErrorReport/@*"/>
+                        <xsl:copy-of select="$_error/ns1:ErrorReport/node()"/>
+                    </pfx:ErrorReport>
+                </pfx:Error>
+            </in>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogMessage Invalid URI">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>538</pd:x>
+        <pd:y>242</pd:y>
+        <config>
+            <processName>/CommonServices/Logging/LogMessage.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:Log>
+                <ns:MessageID>
+                    <xsl:value-of select="$getUUID/uuid"/>
+                </ns:MessageID>
+                <ns:CorrelationID>
+                    <xsl:value-of select="$getUUID/uuid"/>
+                </ns:CorrelationID>
+                <ns:Payload>
+                    <xsl:value-of select="concat(&quot;Message=&quot;,'&quot;',&quot;HTTP request not allowed or is unrecognized&quot;,'&quot;',&quot;&#xA;&quot;,&#xA;&#x9;&#x9;&quot;HTTPCommand=&quot;,'&quot;',$HTTP-Receiver/ProcessStarterOutput/Command,'&quot;',&quot;&#xA;&quot;,&#xA;&#x9;&#x9;&quot;HTTPMethod=&quot;,'&quot;',$HTTP-Receiver/ProcessStarterOutput/Method,'&quot;',&quot;&#xA;&quot;,&#xA;&#x9;&#x9;&quot;HTTPRequestURI=&quot;,'&quot;',$HTTP-Receiver/ProcessStarterOutput/RequestURI,'&quot;',&quot;&#xA;&quot;,&#xA;&#x9;&#x9;&quot;HTTPQueryString=&quot;,'&quot;',$HTTP-Receiver/ProcessStarterOutput/QueryString,'&quot;',&quot;&#xA;&quot;,&#xA;&#x9;&#x9;&quot;HTTPPostData=&quot;,'&quot;',$HTTP-Receiver/ProcessStarterOutput/PostData,'&quot;',&quot;&#xA;&quot;&#xA;)"/>
+                </ns:Payload>
+                <ns:MessageCode>
+                    <xsl:value-of select="&quot;Unrecognized HTTP Request&quot;"/>
+                </ns:MessageCode>
+                <ns:Message>
+                    <xsl:value-of select="concat(&quot;Message=&quot;,'&quot;',&quot;HTTP request not allowed or is unrecognized&quot;,'&quot;',&quot;&#xA;&quot;,&#xA;&#x9;&#x9;&quot;HTTPCommand=&quot;,'&quot;',$HTTP-Receiver/ProcessStarterOutput/Command,'&quot;',&quot;&#xA;&quot;,&#xA;&#x9;&#x9;&quot;HTTPMethod=&quot;,'&quot;',$HTTP-Receiver/ProcessStarterOutput/Method,'&quot;',&quot;&#xA;&quot;,&#xA;&#x9;&#x9;&quot;HTTPRequestURI=&quot;,'&quot;',$HTTP-Receiver/ProcessStarterOutput/RequestURI,'&quot;',&quot;&#xA;&quot;,&#xA;&#x9;&#x9;&quot;HTTPQueryString=&quot;,'&quot;',$HTTP-Receiver/ProcessStarterOutput/QueryString,'&quot;',&quot;&#xA;&quot;&#xA;)"/>
+                </ns:Message>
+                <ns:LogSource>
+                    <xsl:value-of select="BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId)"/>
+                </ns:LogSource>
+                <ns:Debug>
+                    <xsl:value-of select="1"/>
+                </ns:Debug>
+            </ns:Log>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="InvalidURI Response">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>738</pd:x>
+        <pd:y>243</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <flushResponse>true</flushResponse>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <asciiContent>
+                    <xsl:value-of select="concat(&quot;The method &quot;, $HTTP-Receiver/ProcessStarterOutput/Command, &quot; is not allowed.&quot;)"/>
+                </asciiContent>
+                <Headers>
+                    <StatusLine>
+                        <xsl:value-of select="&quot;HTTP/1.1 405&quot;"/>
+                    </StatusLine>
+                </Headers>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Return 400 or 415 or 500">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>765</pd:x>
+        <pd:y>369</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <flushResponse>true</flushResponse>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <Headers>
+                    <xsl:choose>
+                        <xsl:when test="$_error/ns1:ErrorReport/Class = &quot;ValidationException&quot; or  starts-with($_error/ns1:ErrorReport/MsgCode,&quot;Data Validation Error&quot;) or starts-with($_error/ns1:ErrorReport/MsgCode,&quot;Data Transformation Error&quot;)">
+                            <StatusLine>
+                                <xsl:value-of select="&quot;HTTP/1.1 415&quot;"/>
+                            </StatusLine>
+                        </xsl:when>
+                        <xsl:when test="$_error/ns1:ErrorReport/Msg=&quot;Call process results failed validation&quot; or $_error/ns1:ErrorReport/MsgCode=&quot;Bad Request&quot;">
+                            <StatusLine>
+                                <xsl:value-of select="&quot;HTTP/1.1 400&quot;"/>
+                            </StatusLine>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <StatusLine>
+                                <xsl:value-of select="&quot;HTTP/1.1 500&quot;"/>
+                            </StatusLine>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </Headers>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SearchCustomerOrderSummary">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>537</pd:x>
+        <pd:y>103</pd:y>
+        <config>
+            <processName>/BusinessProcesses/AspectVia/PublicationInterfaces/SubProcesses/SearchCustomerOrderSummaryFromCloudSearch.process</processName>
+        </config>
+        <pd:inputBindings>
+            <in>
+                <search_parameters>
+                    <xsl:value-of select="$HTTP-Receiver/ProcessStarterOutput/QueryString"/>
+                </search_parameters>
+                <transactionId>
+                    <xsl:value-of select="$getUUID/uuid"/>
+                </transactionId>
+            </in>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send-HTTPOrdersummaryResponse-1">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>750</pd:x>
+        <pd:y>104</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <flushResponse>true</flushResponse>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <asciiContent>
+                    <xsl:value-of select="$SearchCustomerOrderSummary/out/response"/>
+                </asciiContent>
+                <Headers>
+                    <StatusLine>
+                        <xsl:value-of select="concat(&quot;HTTP/1.1 &quot;,$SearchCustomerOrderSummary/out/http_status_code)"/>
+                    </StatusLine>
+                    <Content-Type>
+                        <xsl:value-of select="&quot;application/json&quot;"/>
+                    </Content-Type>
+                </Headers>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>HTTP Receiver</pd:from>
+        <pd:to>getUUID</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>getUUID</pd:from>
+        <pd:to>Check URL and Method</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Check URL and Method</pd:from>
+        <pd:to>LogMessage Invalid URI</pd:to>
+        <pd:xpathDescription>Invalid URI</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>InvalidURI Response</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogMessage Invalid URI</pd:from>
+        <pd:to>InvalidURI Response</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CatchAll</pd:from>
+        <pd:to>HandleInternalErrors</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>HandleInternalErrors</pd:from>
+        <pd:to>Return 400 or 415 or 500</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Return 400 or 415 or 500</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:description>GET request to search for order summary results</pd:description>
+        <pd:from>Check URL and Method</pd:from>
+        <pd:to>SearchCustomerOrderSummary</pd:to>
+        <pd:xpathDescription>VIA JSON</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$HTTP-Receiver/ProcessStarterOutput/Command="/orders/search" and
+$HTTP-Receiver/ProcessStarterOutput/Method='GET'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SearchCustomerOrderSummary</pd:from>
+        <pd:to>Send-HTTPOrdersummaryResponse-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send-HTTPOrdersummaryResponse-1</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:label>
+        <pd:name>Label (1)</pd:name>
+        <pd:description>REST HTTP Receiver receives messages from Aspect Via for different interfaces on HTTP over GET/POST methods.</pd:description>
+        <pd:x>206</pd:x>
+        <pd:y>57</pd:y>
+        <pd:width>363</pd:width>
+        <pd:height>66</pd:height>
+        <pd:fontColor>-16777216</pd:fontColor>
+        <pd:color>-6684775</pd:color>
+        <pd:type>solid</pd:type>
+        <pd:thickness>1</pd:thickness>
+        <pd:fade>true</pd:fade>
+    </pd:label>
+</pd:ProcessDefinition>

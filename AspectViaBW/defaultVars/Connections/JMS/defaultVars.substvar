@@ -1,0 +1,32 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>TimeoutSeconds</name>
+			<value>60</value>
+			<description>JMS response message timeout.</description>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Integer</type>
+			<modTime>1382557302716</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>password</name>
+			<value>#!aRWgTMPoQos7d86MDuZbyQ5GTgh48v7oVcXgMyCa+ZiUGxGlO/e6kKrqu7lAB2+rS+Vo8kT0MTs=</value>
+			<description>JMS connection password</description>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Password</type>
+			<modTime>1368548160280</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>username</name>
+			<value>svc-tibco-bw</value>
+			<description>JMS connection username</description>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1368548160310</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>

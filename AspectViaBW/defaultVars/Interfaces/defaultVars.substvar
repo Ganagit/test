@@ -1,0 +1,23 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>GhostProcessCheck_TimerIntervalMilliseconds</name>
+			<value>86400000</value>
+			<description>Timer event to run every 7 days.</description>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Integer</type>
+			<modTime>1454002880524</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>GhostProcessCount</name>
+			<value>1</value>
+			<description>Number of processes that should be running.</description>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Integer</type>
+			<modTime>1454002886094</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>

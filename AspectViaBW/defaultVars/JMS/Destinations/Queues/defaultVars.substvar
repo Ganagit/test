@@ -1,0 +1,14 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>HTTPErrorQueue</name>
+			<value>OTTER.ESB.IN.HTTP.CISCOIVR.ERROR.QUEUE</value>
+			<description>Any comminication exception messages are sent into this queue.</description>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1382559649847</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>

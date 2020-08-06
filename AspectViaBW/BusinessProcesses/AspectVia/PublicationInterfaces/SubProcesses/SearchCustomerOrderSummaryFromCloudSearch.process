@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:pfx16="http://www.tibco.com/ns/no_namespace_schema_location/SharedResources/SchemaDefinitions/Common/SolrSearchResponse.xsd" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:pfx14="http://www.tibco.com/schemas/OrderDataStoreBW/SharedResources/SchemaDefinitions/Solr/Schema.xsd3" xmlns:pfx11="http://www.tibco.com/pe/SignalInActivitySchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:pfx19="http://www.tibco.com/ns/no_namespace_schema_location/SharedResources/SchemaDefinitions/Common/CloudSearchResponse.xsd" xmlns:pfx17="http://tibco.common.com/Error.xsd" xmlns:pfx5="http://schemas.otterbox.com/messages/2011/09/CustomerIncidentCreatedEvent" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.tibco.com/pe/CheckpointSchema" xmlns:pfx9="http://schemas.otterbox.com/CanonicalMessages-1.0.0/" xmlns:pfx7="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns14="http://www.otterbox.com/CommonServices/Logging/Request" xmlns:ns15="http://tibco.common.com/Log.xsd" xmlns:ns9="http://tibco.common.com/QueryString.xsd" xmlns:ns12="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns5="http://schemas.otterbox.com/types/2011/09/" xmlns:ns13="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns6="http://xmlns.tibco.com/encodings/mime" xmlns:pfx="http://otterbox.com/demandware/2011/09/incident/wsdl/abstract" xmlns:ns7="http://xmlns.tibco.com/bw/plugin-api/messages/context" xmlns:ns8="http://schemas.otterbox.com/CanonicalDataModel-1.0.0/" xmlns:ns2="http://schemas.tibco.com/bw/plugins/jms/5.0/jmsExceptions" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns51="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:formatPhoneNumber="java://com.otterbox.bsp.eai.telephone.TelephoneNumberFormatterCustomFunction" xmlns:ns4="com/tibco/pe/commands" xmlns:ns3="http://www.tibco.com/namespaces/tnt/plugins/file" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import namespace="http://schemas.otterbox.com/messages/2011/09/CustomerIncidentCreatedEvent" schemaLocation="/SharedResources/SchemaDefinitions/CBO/Canonical-CustomerIncidentCreatedEvent.xsd"/>
+    <xsd:import namespace="http://schemas.otterbox.com/CanonicalDataModel-1.0.0/" schemaLocation="/SharedResources/SchemaDefinitions/CBO/CanonicalDataModel-1.0.0.xsd"/>
+    <xsd:import namespace="http://schemas.otterbox.com/CanonicalMessages-1.0.0/" schemaLocation="/SharedResources/SchemaDefinitions/CBO/CanonicalMessages-1.0.0.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/SharedResources/SchemaDefinitions/Common/SolrSearchResponse.xsd" schemaLocation="/SharedResources/SchemaDefinitions/Common/SolrSearchResponse.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/SharedResources/SchemaDefinitions/Common/CloudSearchResponse.xsd" schemaLocation="/SharedResources/SchemaDefinitions/Common/CloudSearchResponse.xsd"/>
+    <wsdl:import namespace="http://otterbox.com/demandware/2011/09/incident/wsdl/abstract" location="/SharedResources/WSDL/AbstractWSDL/Demandware/DemandwareIncidentAbstractWSDL.wsdl"/>
+    <pd:name>BusinessProcesses/AspectVia/PublicationInterfaces/SubProcesses/SearchCustomerOrderSummaryFromCloudSearch.process</pd:name>
+    <pd:description/>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="in">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="search_parameters" type="xsd:string"/>
+                    <xsd:element name="transactionId" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>88</pd:startX>
+    <pd:startY>80</pd:startY>
+    <pd:returnBindings>
+        <out>
+            <response>
+                <xsl:value-of select="$Xml2JsonConversion/output_json"/>
+            </response>
+            <http_status_code>
+                <xsl:value-of select="200"/>
+            </http_status_code>
+        </out>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="out">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="response" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="http_status_code" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>1170</pd:endX>
+    <pd:endY>80</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/13164605810156</pd:targetNamespace>
+    <pd:activity name="Begin LogMessage">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>224</pd:x>
+        <pd:y>80</pd:y>
+        <config>
+            <processName>/CommonServices/Logging/LogMessage.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns15:Log>
+                <ns15:MessageID>
+                    <xsl:value-of select="$Start/in/transactionId"/>
+                </ns15:MessageID>
+                <ns15:CorrelationID>
+                    <xsl:value-of select="$Start/in/transactionId"/>
+                </ns15:CorrelationID>
+                <ns15:MessageCode>
+                    <xsl:value-of select="&quot;CustomerOrderCloudSearchSummaryRequestVia&quot;"/>
+                </ns15:MessageCode>
+                <ns15:Message>
+                    <xsl:value-of select="concat(&quot;Message=&quot;,'&quot;',&quot;Via CustomerOrderSummarySearch request received &quot;,'&quot;',&quot;&#xA;&quot;,&#xA;&#x9;&quot;SearchParameters=&quot;,&quot;'&quot;,$Start/in/search_parameters, &quot;'&quot;,&quot;&#xA;&quot;)"/>
+                </ns15:Message>
+                <ns15:LogSource>
+                    <xsl:value-of select="BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId)"/>
+                </ns15:LogSource>
+                <ns15:Debug>
+                    <xsl:value-of select="0"/>
+                </ns15:Debug>
+            </ns15:Log>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CloudSearchOrderSummary">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>488</pd:x>
+        <pd:y>80</pd:y>
+        <config>
+            <processName>/CommonServices/UtilityServices/Common/CloudSearchOrderSummary.process</processName>
+        </config>
+        <pd:inputBindings>
+            <OrderSearchParameters>
+                <SearchString>
+                    <xsl:value-of select="$Start/in/search_parameters"/>
+                </SearchString>
+            </OrderSearchParameters>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="End LogMessage">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1038</pd:x>
+        <pd:y>80</pd:y>
+        <config>
+            <processName>/CommonServices/Logging/LogMessage.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns15:Log>
+                <ns15:MessageID>
+                    <xsl:value-of select="$Start/in/transactionId"/>
+                </ns15:MessageID>
+                <ns15:CorrelationID>
+                    <xsl:value-of select="$Start/in/transactionId"/>
+                </ns15:CorrelationID>
+                <ns15:MessageCode>
+                    <xsl:value-of select="&quot;CustomerOrderCloudSearchSearchResponseVia&quot;"/>
+                </ns15:MessageCode>
+                <xsl:choose>
+                    <xsl:when test="count($Map-Data/orders/order)>0">
+                        <ns15:Message>
+                            <xsl:value-of select="if(count($Map-Data/orders/order)>0)&#xA;then&#xA;concat(&quot;Message=&quot;,'&quot;',&quot;Via received response &quot;,'&quot;',&quot;&#xA;&quot;,&#xA;&#x9;&quot;OrderNo=&quot;,'&quot;',tib:concat-sequence-format($Map-Data/orders/order/order_number,&quot;,&quot;),'&quot;',&quot;&#xA;&quot;)&#xA;else&#xA;concat(&quot;Message=&quot;,'&quot;',&quot;Via received empty response &quot;,'&quot;',&quot;&#xA;&quot;)"/>
+                        </ns15:Message>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <ns15:Message>
+                            <xsl:value-of select="concat(&quot;Message=&quot;,'&quot;',&quot;Via received no results &quot;,'&quot;',&quot;&#xA;&quot;,&#xA;&#x9;&quot;SearchParameters=&quot;,'&quot;',$CloudSearchOrderSummary/searchSummary,&quot;'&quot;,&quot;&#xA;&quot;)"/>
+                        </ns15:Message>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <ns15:LogSource>
+                    <xsl:value-of select="BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId)"/>
+                </ns15:LogSource>
+                <ns15:Debug>
+                    <xsl:value-of select="0"/>
+                </ns15:Debug>
+            </ns15:Log>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>762</pd:x>
+        <pd:y>79</pd:y>
+        <config>
+            <element>
+                <xsd:element name="orders">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="order" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="order_number" type="xsd:string"/>
+                                        <xsd:element name="order_type" type="xsd:string"/>
+                                        <xsd:element name="order_status" type="xsd:string"/>
+                                        <xsd:element name="order_date" type="xsd:string"/>
+                                        <xsd:element name="ship_date" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ship_method" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ship_tracking" type="xsd:string" minOccurs="0"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <orders>
+                <xsl:for-each select="$Parse-XML/results/hits/hit">
+                    <order>
+                        <order_number>
+                            <xsl:value-of select="if ($Parse-REST-Query-String/ns9:QueryString/ns9:Tuple[ns9:Name = 'original_order_number'] and&#xA;&#x9;$Parse-REST-Query-String/ns9:QueryString/ns9:Tuple[ns9:Name = 'original_order_number']/ns9:Value = field[@name=&quot;ecommerce_order_id&quot;] ) then&#xA;&#x9;&#x9;field[@name=&quot;ecommerce_order_id&quot;]&#xA;else&#xA;&#x9;&#x9;field[@name=&quot;erp_order_id&quot;]"/>
+                        </order_number>
+                        <order_type>
+                            <xsl:value-of select="field[@name=&quot;order_type&quot;]"/>
+                        </order_type>
+                        <order_status>
+                            <xsl:value-of select="field[@name=&quot;order_status&quot;]"/>
+                        </order_status>
+                        <order_date>
+                            <xsl:value-of select="field[@name=&quot;order_date&quot;]"/>
+                        </order_date>
+                        <xsl:if test="exists(field[@name=&quot;shipment_dates&quot;][1])">
+                            <ship_date>
+                                <xsl:value-of select="tib:format-dateTime('yyyy-MM-dd', field[@name=&quot;shipment_dates&quot;][1])"/>
+                            </ship_date>
+                        </xsl:if>
+                        <xsl:if test="field[@name=&quot;shipping_method&quot;][1]">
+                            <ship_method>
+                                <xsl:value-of select="field[@name=&quot;shipping_method&quot;][1]"/>
+                            </ship_method>
+                        </xsl:if>
+                        <xsl:if test="field[@name=&quot;shipment_tracking_numbers&quot;]">
+                            <ship_tracking>
+                                <xsl:value-of select="field[@name=&quot;shipment_tracking_numbers&quot;]"/>
+                            </ship_tracking>
+                        </xsl:if>
+                    </order>
+                </xsl:for-each>
+            </orders>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse REST Query String">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>349</pd:x>
+        <pd:y>88</pd:y>
+        <config>
+            <processName>/CommonServices/UtilityServices/Common/Parse REST Query String.process</processName>
+        </config>
+        <pd:inputBindings>
+            <String>
+                <xsl:value-of select="$Start/in/search_parameters"/>
+            </String>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>626</pd:x>
+        <pd:y>80</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx19:results"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$CloudSearchOrderSummary/searchSummary"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Xml2JsonConversion">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>903</pd:x>
+        <pd:y>80</pd:y>
+        <config>
+            <processName>/CommonServices/UtilityServices/Common/Xml2JsonConversion.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <input_xml>
+                    <xsl:value-of select="tib:render-xml($Map-Data/orders)"/>
+                </input_xml>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Begin LogMessage</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>End LogMessage</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Begin LogMessage</pd:from>
+        <pd:to>Parse REST Query String</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CloudSearchOrderSummary</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>Xml2JsonConversion</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Xml2JsonConversion</pd:from>
+        <pd:to>End LogMessage</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse REST Query String</pd:from>
+        <pd:to>CloudSearchOrderSummary</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>
