@@ -8,8 +8,8 @@
     <pd:starter name="HTTP Receiver">
         <pd:type>com.tibco.plugin.http.HTTPEventSource</pd:type>
         <pd:resourceType>httppalette.httpEventSource</pd:resourceType>
-        <pd:x>47</pd:x>
-        <pd:y>150</pd:y>
+        <pd:x>48</pd:x>
+        <pd:y>160</pd:y>
         <config>
             <outputMode>String</outputMode>
             <defaultEncoding>UTF8</defaultEncoding>
